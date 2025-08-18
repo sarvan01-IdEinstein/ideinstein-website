@@ -46,8 +46,9 @@ const FloatingContactHub = () => {
           ...(isQuoteRequest && { 
             service: formData.service,
             description: formData.message,
+            scope: `${formData.service} project as described in the message`,
             timeline: 'As soon as possible',
-            budget: 'To be discussed'
+            budget: 5000 // Default budget value
           })
         }),
       })
