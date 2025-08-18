@@ -292,7 +292,7 @@ const Header = () => {
 
                 {item.submenu && (
                   <div
-                    className="absolute top-full left-0 mt-2 w-96 opacity-0 invisible
+                    className="absolute top-full left-0 mt-2 w-80 opacity-0 invisible
                       group-hover:opacity-100 group-hover:visible
                       transition-all duration-300 ease-in-out transform
                       group-hover:translate-y-0 translate-y-2 z-50"
@@ -319,38 +319,14 @@ const Header = () => {
                                   key={subItem.title}
                                   href={subItem.href}
                                   className={`
-                                    group block px-6 py-3 text-gray-700 hover:text-primary 
+                                    group block px-6 py-4 text-gray-700 hover:text-primary 
                                     transition-all duration-300 ease-out relative
-                                    ${isActive(subItem.href) ? 'text-primary font-semibold' : 'hover:translate-x-1'}
+                                    ${isActive(subItem.href) ? 'text-primary font-semibold bg-primary/5' : 'hover:translate-x-1'}
                                   `}
                                 >
-                                  <div className="flex items-center justify-between">
-                                    <span className="flex items-center">
-                                      <span className="text-sm font-medium">
-                                        {subItem.title}
-                                      </span>
-                                    </span>
-                                    {isActive(subItem.href) && (
-                                      <motion.div
-                                        className="w-1.5 h-1.5 bg-yellow-400 rounded-full"
-                                        initial={{ scale: 0, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        transition={{ 
-                                          type: 'spring', 
-                                          stiffness: 500, 
-                                          damping: 25,
-                                          delay: 0.1 
-                                        }}
-                                      />
-                                    )}
-                                    {/* Subtle hover indicator */}
-                                    <motion.div
-                                      className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary opacity-0 group-hover:opacity-100"
-                                      initial={{ scaleY: 0 }}
-                                      whileHover={{ scaleY: 1 }}
-                                      transition={{ duration: 0.2 }}
-                                    />
-                                  </div>
+                                  <span className="text-sm font-medium">
+                                    {subItem.title}
+                                  </span>
                                 </Link>
                               </motion.div>
                             ))}
