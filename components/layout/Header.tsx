@@ -324,7 +324,7 @@ const Header = () => {
                                     ${isActive(subItem.href) ? 'text-primary font-semibold bg-primary/5' : 'hover:translate-x-1'}
                                   `}
                                 >
-                                  <span className="text-sm font-medium">
+                                  <span className="text-base font-medium">
                                     {subItem.title}
                                   </span>
                                 </Link>
