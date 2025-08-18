@@ -97,6 +97,7 @@ export const META = {
       'max-snippet': -1,
     },
   },
+  metadataBase: new URL('https://ideinstein.com'),
   openGraph: {
     type: 'website',
     locale: 'en_US',

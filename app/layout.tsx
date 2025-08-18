@@ -4,8 +4,7 @@ import { Inter } from 'next/font/google'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { CartProvider } from '@/context/CartContext'
-import ContactWidget from '@/components/shared/ContactWidget'
-import WhatsAppButton from '@/components/shared/WhatsAppButton'
+import FloatingContactHub from '@/components/shared/FloatingContactHub'
 import ErrorBoundary from '@/components/shared/ErrorBoundary'
 import StructuredData from '@/components/shared/StructuredData'
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'
@@ -38,8 +37,7 @@ export default function RootLayout({
                   {children}
                 </main>
                 <Footer />
-                <ContactWidget />
-                <WhatsAppButton />
+                <FloatingContactHub />
               </div>
             </CartProvider>
           </ErrorBoundary>

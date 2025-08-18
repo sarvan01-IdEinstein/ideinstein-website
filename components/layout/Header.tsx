@@ -58,16 +58,19 @@ const menuItems = [
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-
+  const [isLoaded, setIsLoaded] = useState(false);
   const [showQuotation, setShowQuotation] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const pathname = usePathname();
   const { data: session, status } = useSession();
 
   useEffect(() => {
+    // Set loaded state after component mounts
+    setIsLoaded(true);
+    
     const handleScroll = throttle(() => {
       setIsScrolled(window.scrollY > 20);
-    }, 200);
+    }, 100);
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -93,29 +96,57 @@ const Header = () => {
 
   return (
     <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ 
+        y: 0, 
+        opacity: 1,
+        backdropFilter: isScrolled ? 'blur(20px) saturate(180%)' : 'blur(10px) saturate(120%)'
+      }}
+      transition={{ 
+        type: 'spring', 
+        stiffness: 100, 
+        damping: 20,
+        opacity: { duration: 0.3 }
+      }}
       className={`
         fixed top-0 w-full z-50
-        backdrop-blur-lg
-        transition-all duration-500 ease-in-out
+        backdrop-blur-xl
+        transition-all duration-700 ease-out
+        border-b border-white/10
         ${isScrolled
-          ? 'bg-primary/95 shadow-lg py-1.5'
-          : 'bg-primary/80 py-2.5'}
+          ? 'bg-primary/95 shadow-2xl shadow-primary/20 py-1.5' 
+          : 'bg-primary/85 py-2.5'}
       `}
+      style={{
+        background: isScrolled 
+          ? 'linear-gradient(135deg, rgba(30, 64, 175, 0.95) 0%, rgba(59, 130, 246, 0.9) 100%)'
+          : 'linear-gradient(135deg, rgba(30, 64, 175, 0.85) 0%, rgba(59, 130, 246, 0.8) 100%)'
+      }}
       role="banner"
     >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto px-4 relative">
+        <div className="flex items-center justify-between h-16 relative">
           <Link 
             href="/" 
             className="flex items-center space-x-3 group"
             aria-label="IdEinstein Home"
           >
             <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ 
+                type: 'spring', 
+                stiffness: 200, 
+                damping: 15,
+                delay: 0.2 
+              }}
+              whileHover={{ 
+                scale: 1.1, 
+                rotate: 5,
+                boxShadow: '0 0 20px rgba(251, 191, 36, 0.5)'
+              }}
+              whileTap={{ scale: 0.95 }}
+              className="relative"
             >
               <Image 
                 src="/logo.png" 
@@ -125,65 +156,153 @@ const Header = () => {
                 priority 
                 className="h-12 w-12 object-contain rounded-lg"
               />
+              {/* Pulse ring animation */}
+              <motion.div
+                className="absolute inset-0 rounded-lg border-2 border-yellow-400/50"
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [0.5, 0, 0.5],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              />
             </motion.div>
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              whileHover={{ 
+                scale: 1.02,
+                textShadow: '0 0 8px rgba(251, 191, 36, 0.8)'
+              }}
               className="text-2xl font-bold"
             >
-              <span className="text-yellow-400">Id</span>
-              <span className="text-white">Einstein</span>
+              <motion.span 
+                className="text-yellow-400"
+                whileHover={{ 
+                  scale: 1.1,
+                  filter: 'brightness(1.2)'
+                }}
+                transition={{ type: 'spring', stiffness: 400 }}
+              >
+                Id
+              </motion.span>
+              <motion.span 
+                className="text-white"
+                whileHover={{ 
+                  scale: 1.05,
+                  color: '#f8fafc'
+                }}
+                transition={{ type: 'spring', stiffness: 400 }}
+              >
+                Einstein
+              </motion.span>
             </motion.div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8" role="navigation">
-            {menuItems.map((item) => (
-              <div key={item.title} className="relative group">
-                <Link
-                  href={item.href}
-                  className={`
-                    relative py-2 text-white/90 hover:text-white
-                    transition-colors duration-300 ease-in-out
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-md
-                    ${isActive(item.href) ? 'text-white' : ''}
-                  `}
-                  aria-expanded={item.submenu ? "true" : undefined}
-                  role={item.submenu ? "button" : undefined}
-                  onClick={item.submenu ? (e) => e.preventDefault() : undefined}
+          <motion.nav 
+            className="hidden lg:flex items-center space-x-8 relative" 
+            role="navigation"
+            initial="hidden"
+            animate={isLoaded ? "visible" : "hidden"}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.4
+                }
+              }
+            }}
+          >
+            {menuItems.map((item, index) => (
+              <motion.div 
+                key={item.title} 
+                className="relative group"
+                variants={{
+                  hidden: { opacity: 0, y: -20 },
+                  visible: { 
+                    opacity: 1, 
+                    y: 0,
+                    transition: { type: 'spring', stiffness: 300, damping: 20 }
+                  }
+                }}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                 >
-                  <span className="flex items-center">
-                    {item.title}
-                    {item.submenu && (
+                  <Link
+                    href={item.href}
+                    className={`
+                      relative py-2 px-3 text-white/90 hover:text-yellow-400
+                      transition-all duration-300 ease-in-out
+                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400/50
+                      ${isActive(item.href) ? 'text-yellow-400' : ''}
+                    `}
+                    aria-expanded={item.submenu ? "true" : undefined}
+                    role={item.submenu ? "button" : undefined}
+                    onClick={item.submenu ? (e) => e.preventDefault() : undefined}
+                  >
+                    <span className="flex items-center relative">
                       <motion.span
-                        animate={item.submenu ? { rotate: 180 } : { rotate: 0 }}
-                        transition={{ duration: 0.2 }}
+                        whileHover={{ x: 2 }}
+                        transition={{ type: 'spring', stiffness: 400 }}
+                        className="relative"
                       >
-                        <ChevronDown className="ml-1 w-4 h-4" />
+                        {item.title}
+                        {!item.submenu && isActive(item.href) && (
+                          <motion.div
+                            layoutId="activeIndicator"
+                            className="absolute left-0 right-0 top-full mt-1 h-0.5 bg-gradient-to-r from-yellow-400/90 via-yellow-300 to-yellow-400/90 rounded-full"
+                            initial={{ scaleX: 0, opacity: 0 }}
+                            animate={{ scaleX: 1, opacity: 1 }}
+                            exit={{ scaleX: 0, opacity: 0 }}
+                            transition={{ 
+                              type: 'spring', 
+                              stiffness: 400, 
+                              damping: 30,
+                              opacity: { duration: 0.2 }
+                            }}
+                            style={{
+                              transformOrigin: 'center',
+                              boxShadow: '0 0 8px rgba(251, 191, 36, 0.4)'
+                            }}
+                          />
+                        )}
                       </motion.span>
-                    )}
-                  </span>
-                  {!item.submenu && isActive(item.href) && (
-                    <motion.div
-                      layoutId="activeIndicator"
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-white rounded-full"
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    />
-                  )}
-                </Link>
+                      {item.submenu && (
+                        <motion.span
+                          whileHover={{ rotate: 180 }}
+                          transition={{ duration: 0.3, type: 'spring' }}
+                          className="ml-1"
+                        >
+                          <ChevronDown className="w-4 h-4" />
+                        </motion.span>
+                      )}
+                    </span>
+                  </Link>
+                </motion.div>
 
                 {item.submenu && (
                   <div
                     className="absolute top-full left-0 mt-2 w-96 opacity-0 invisible
                       group-hover:opacity-100 group-hover:visible
                       transition-all duration-300 ease-in-out transform
-                      group-hover:translate-y-0 translate-y-2"
+                      group-hover:translate-y-0 translate-y-2 z-50"
                   >
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="bg-white rounded-xl shadow-xl overflow-hidden border border-primary/10"
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                      className="bg-white backdrop-blur-xl rounded-xl shadow-2xl overflow-hidden border border-primary/10"
                     >
                       {item.submenu.map((category) => (
                         <div key={category.category} className="py-2">
@@ -192,23 +311,48 @@ const Header = () => {
                           </div>
                           <div className="space-y-1">
                             {category.items.map((subItem) => (
-                              <Link
-                                key={subItem.title}
-                                href={subItem.href}
-                                className={`
-                                  block px-6 py-2.5 text-text hover:bg-primary/5
-                                  transition-colors duration-200 ease-in-out
-                                  ${isActive(subItem.href) ? 'bg-primary/5 text-primary' : ''}
-                                `}
+                              <motion.div
+                                whileHover={{ scale: 1.02, x: 5 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                               >
-                                <motion.div
-                                  whileHover={{ x: 5 }}
-                                  className="flex items-center"
+                                <Link
+                                  key={subItem.title}
+                                  href={subItem.href}
+                                  className={`
+                                    group block px-6 py-3 text-gray-700 hover:text-primary 
+                                    transition-all duration-300 ease-out relative
+                                    ${isActive(subItem.href) ? 'text-primary font-semibold' : 'hover:translate-x-1'}
+                                  `}
                                 >
-                                  <span className="text-primary mr-2">•</span>
-                                  {subItem.title}
-                                </motion.div>
-                              </Link>
+                                  <div className="flex items-center justify-between">
+                                    <span className="flex items-center">
+                                      <span className="text-sm font-medium">
+                                        {subItem.title}
+                                      </span>
+                                    </span>
+                                    {isActive(subItem.href) && (
+                                      <motion.div
+                                        className="w-1.5 h-1.5 bg-yellow-400 rounded-full"
+                                        initial={{ scale: 0, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        transition={{ 
+                                          type: 'spring', 
+                                          stiffness: 500, 
+                                          damping: 25,
+                                          delay: 0.1 
+                                        }}
+                                      />
+                                    )}
+                                    {/* Subtle hover indicator */}
+                                    <motion.div
+                                      className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary opacity-0 group-hover:opacity-100"
+                                      initial={{ scaleY: 0 }}
+                                      whileHover={{ scaleY: 1 }}
+                                      transition={{ duration: 0.2 }}
+                                    />
+                                  </div>
+                                </Link>
+                              </motion.div>
                             ))}
                           </div>
                         </div>
@@ -216,12 +360,17 @@ const Header = () => {
                     </motion.div>
                   </div>
                 )}
-              </div>
+              </motion.div>
             ))}
-          </nav>
+          </motion.nav>
 
           {/* Desktop Actions */}
-          <div className="hidden lg:flex items-center space-x-4">
+          <motion.div 
+            className="hidden lg:flex items-center space-x-4"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
 
             {status === 'authenticated' ? (
               <div className="relative user-menu-container">
@@ -269,24 +418,58 @@ const Header = () => {
                 </AnimatePresence>
               </div>
             ) : (
-              <motion.div whileHover={{ scale: 1.05 }}>
+              <motion.div 
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 400 }}
+              >
                 <Link href="/auth/signin">
-                  <Button variant="header-cta">
-                    Customer Area
+                  <Button 
+                    variant="header-cta"
+                    className="relative overflow-hidden group"
+                  >
+                    <motion.span
+                      className="relative z-10"
+                      whileHover={{ x: 2 }}
+                    >
+                      Customer Area
+                    </motion.span>
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-white/20"
+                      initial={{ x: '-100%' }}
+                      whileHover={{ x: '100%' }}
+                      transition={{ duration: 0.6 }}
+                    />
                   </Button>
                 </Link>
               </motion.div>
             )}
             
-            <motion.div whileHover={{ scale: 1.05 }}>
+            <motion.div 
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 400 }}
+            >
               <Button
                 variant="header-cta"
                 onClick={() => setShowQuotation(true)}
+                className="relative overflow-hidden group"
               >
-                Get Quote
+                <motion.span
+                  className="relative z-10"
+                  whileHover={{ x: 2 }}
+                >
+                  Get Quote
+                </motion.span>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-white/20"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '100%' }}
+                  transition={{ duration: 0.6 }}
+                />
               </Button>
             </motion.div>
-          </div>
+          </motion.div>
 
           {/* Mobile Menu Button */}
           <motion.button
