@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
-
-// Dynamic imports to prevent build-time execution
-const getZohoServices = async () => {
-  const { zohoCRM, zohoWorkDrive } = await import('@/lib/zoho/index')
-  return { zohoCRM, zohoWorkDrive }
-}
+import { zohoCRM, zohoWorkDrive } from '@/lib/zoho/index'
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,7 +13,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { zohoCRM, zohoWorkDrive } = await getZohoServices()
+    // zohoCRM and zohoWorkDrive are already imported at the top
     
     const session = await getServerSession(authOptions)
     const body = await request.json()

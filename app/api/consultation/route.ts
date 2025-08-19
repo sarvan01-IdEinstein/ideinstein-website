@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-
-// Dynamic import to prevent build-time execution
-const getZohoCRM = async () => {
-  const { zohoCRM } = await import('@/lib/zoho/index');
-  return zohoCRM;
-};
+import { zohoCRM } from '@/lib/zoho/index';
 
 // Consultation request validation schema
 const consultationSchema = z.object({
@@ -40,7 +35,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const zohoCRM = await getZohoCRM();
+    // zohoCRM is already imported at the top
     
     const body = await request.json();
     

@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-// Dynamic import to prevent build-time execution
-const getZohoCRM = async () => {
-  const { zohoCRM } = await import('@/lib/zoho/index')
-  return zohoCRM
-}
+import { zohoCRM } from '@/lib/zoho/index'
 
 export async function POST(request: NextRequest) {
   console.log('🚀 Signup API called')
@@ -18,7 +13,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const zohoCRM = await getZohoCRM()
+    // zohoCRM is already imported at the top
     
     const body = await request.json()
     const { firstName, lastName, email, company, password } = body

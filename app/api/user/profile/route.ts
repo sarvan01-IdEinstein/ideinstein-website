@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-
-// Dynamic import to prevent build-time execution
-const getZohoService = async () => {
-  const { zohoService } = await import('@/lib/zoho')
-  return zohoService
-}
+import { zohoService } from '@/lib/zoho'
 
 export async function GET(request: NextRequest) {
   try {
@@ -24,7 +19,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const zohoService = await getZohoService()
+    // zohoService is already imported at the top
 
     // Find the contact in Zoho CRM
     const contact = await zohoService.findContactByEmail(session.user.email)
