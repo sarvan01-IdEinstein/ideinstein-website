@@ -1,0 +1,52 @@
+{
+  "mcpServers": {
+    "basic-memory": {
+      "command": "uvx",
+      "args": ["basic-memory@latest"],
+      "env": {
+        "BASIC_MEMORY_PATH": "memory"
+      },
+      "disabled": false,
+      "autoApprove": []
+    },
+    "Context7": {
+      "command": "uvx",
+      "args": ["context7@latest"],
+      "env": {},
+      "disabled": false,
+      "autoApprove": []
+    },
+    "sourcebot": {
+      "command": "uvx",
+      "args": ["sourcebot@latest"],
+      "env": {},
+      "disabled": false,
+      "autoApprove": []
+    },
+    "bright-data": {
+      "command": "uvx",
+      "args": ["bright-data@latest"],
+      "env": {
+        "BRIGHT_DATA_API_KEY": "your-bright-data-api-key-here"
+      },
+      "disabled": false,
+      "autoApprove": []
+    },
+    "playwright-browser": {
+      "command": "uvx",
+      "args": ["playwright-browser@latest"],
+      "env": {},
+      "disabled": false,
+      "autoApprove": []
+    },
+    "brave-search": {
+      "command": "uvx",
+      "args": ["brave-search@latest"],
+      "env": {
+        "BRAVE_API_KEY": "your-brave-api-key-here"
+      },
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

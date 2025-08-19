@@ -41,7 +41,7 @@
         "@modelcontextprotocol/server-brave-search"
       ],
       "env": {
-        "BRAVE_API_KEY": "BSAHAKNdS6Vj-EKcd7VJhvcB0nAPqRy"
+        "BRAVE_API_KEY": "your-brave-api-key-here"
       },
       "disabled": false,
       "autoApprove": []

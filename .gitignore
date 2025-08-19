@@ -59,8 +59,9 @@ temp/
 # Problematic long filenames only
 **/Archive/
 **/*Constraints*.png
-node_modules
-node_modules
-node_modules
-node_modules
+
+# Kiro IDE settings with potential API keys
+.kiro/settings/mcp.json
+
+# Remove duplicate node_modules entries
 node_modules
