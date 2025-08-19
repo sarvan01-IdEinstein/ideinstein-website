@@ -1,0 +1,314 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enhanced User management with Zoho integration
+model User {
+  id                  String   @id @default(cuid())
+  email               String   @unique
+  name                String?
+  role                Role     @default(USER)
+  avatar              String?
+  
+  // Zoho Integration Fields
+  contactId           String?  @unique // Zoho CRM Contact ID
+  accountId           String?  // Zoho CRM Account ID
+  userRole            UserRole @default(CLIENT_USER)
+  clientDashboardId   String?  @unique // Custom unique identifier
+  zohoRefreshToken    String?  // Encrypted OAuth token
+  preferences         Json     @default("{}")
+  lastLogin           DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  blogPosts     BlogPost[]
+  auditLogs     AuditLog[]
+  notifications Notification[]
+  
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+  EDITOR
+}
+
+// Enhanced RBAC Roles
+enum UserRole {
+  CLIENT_USER
+  CLIENT_ADMIN
+  INTERNAL_ENGINEER
+  INTERNAL_PM
+  ADMIN
+}
+
+// Contact form submissions
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  phone     String?
+  company   String?
+  status    ContactStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contacts")
+}
+
+enum ContactStatus {
+  PENDING
+  RESPONDED
+  CLOSED
+}
+
+// Consultation requests
+model Consultation {
+  id                     String   @id @default(cuid())
+  name                   String
+  email                  String
+  company                String
+  phone                  String?
+  serviceType            String
+  projectDescription     String
+  timeline               String
+  budget                 String
+  preferredContactMethod String?
+  status                 ConsultationStatus @default(PENDING)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@map("consultations")
+}
+
+enum ConsultationStatus {
+  PENDING
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+// Newsletter subscriptions
+model Newsletter {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  interests     String? // Comma-separated interest categories
+  status        NewsletterStatus @default(ACTIVE)
+  subscribedAt  DateTime @default(now())
+  unsubscribedAt DateTime?
+
+  @@map("newsletters")
+}
+
+enum NewsletterStatus {
+  ACTIVE
+  UNSUBSCRIBED
+}
+
+// Blog posts
+model BlogPost {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String?
+  content     String
+  published   Boolean  @default(false)
+  publishedAt DateTime?
+  category    String
+  tags        String? // Comma-separated tags
+  views       Int      @default(0)
+  readTime    Int      // in minutes
+  authorId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  author User @relation(fields: [authorId], references: [id])
+
+  @@map("blog_posts")
+}
+
+// Services
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  category    String? // Comma-separated categories
+  features    String? // Comma-separated features
+  pricing     Json?    // Flexible pricing structure
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  quotes Quote[]
+
+  @@map("services")
+}
+
+// Quote requests
+model Quote {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  company     String?
+  phone       String?
+  serviceId   String
+  requirements String
+  timeline    String?
+  budget      String?
+  status      QuoteStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  service Service @relation(fields: [serviceId], references: [id])
+
+  @@map("quotes")
+}
+
+enum QuoteStatus {
+  PENDING
+  SENT
+  ACCEPTED
+  DECLINED
+}
+
+// Store products (for future e-commerce)
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String
+  price       Decimal
+  currency    String   @default("EUR")
+  category    String
+  tags        String? // Comma-separated tags
+  images      String? // Comma-separated image URLs
+  inStock     Boolean  @default(true)
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("products")
+}
+
+// Analytics events
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  eventType  String   // 'page_view', 'form_submit', 'quote_request', etc.
+  eventData  Json     // Flexible event data
+  userAgent  String?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@map("analytics_events")
+}
+
+// Projects Cache for Performance
+model ProjectsCache {
+  id                  String   @id @default(cuid())
+  zohoProjectId       String   @unique
+  accountId           String
+  name                String
+  status              String
+  progressPercentage  Int      @default(0)
+  milestoneJson       Json?
+  timelineJson        Json?
+  budgetInfo          Json?
+  teamMembers         Json?
+  lastSynced          DateTime @default(now())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  @@map("projects_cache")
+}
+
+// Invoices Cache
+model InvoicesCache {
+  id              String   @id @default(cuid())
+  zohoInvoiceId   String   @unique
+  accountId       String
+  invoiceNumber   String
+  status          String
+  totalAmount     Decimal
+  amountDue       Decimal
+  dueDate         DateTime?
+  paymentUrl      String?
+  pdfUrl          String?
+  lastSynced      DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("invoices_cache")
+}
+
+// Comprehensive Audit Log
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  action      String   // login, view_project, download_file, etc.
+  entity      String   // project, invoice, file, etc.
+  entityId    String?
+  meta        Json?    // Additional context data
+  ipAddress   String?
+  userAgent   String?
+  sessionId   String?
+  timestamp   DateTime @default(now())
+  
+  user        User?    @relation(fields: [userId], references: [id])
+  
+  @@map("audit_log")
+}
+
+// Notifications System
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // project_update, invoice_due, file_uploaded, etc.
+  title       String
+  message     String
+  actionUrl   String?  // Link to relevant page
+  read        Boolean  @default(false)
+  emailSent   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id])
+  
+  @@map("notifications")
+}
+
+// File Metadata Enhancement
+model FileMetadata {
+  id                String   @id @default(cuid())
+  zohoFileId        String?  @unique
+  projectId         String?  // Link to projects_cache
+  accountId         String
+  filename          String
+  originalFilename  String
+  fileSize          BigInt
+  mimeType          String
+  filePath          String   // S3 or WorkDrive path
+  accessLevel       String   @default("project") // project, account, public
+  uploadedBy        String?
+  createdAt         DateTime @default(now())
+  
+  @@map("file_metadata")
+}

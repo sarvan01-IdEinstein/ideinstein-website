@@ -56,12 +56,11 @@ const getStepDirectoryName = (
         "RD-1-Scope and Constraints",
       "Research & Initial Concept Design":
         "RD-2-Research & Initial Concept Design",
-      "Proof of Concept": "RD-3-Proof of Concept",
-      "Engineering Analysis": "RD-4-Engineering Analysis",
-      "Final Design & Full Prototype": "RD-5-Final Design & Full Prototype",
-      "User Validation & Iteration": "RD-6-User Validation & Iteration",
-      "Regulatory & Compliance Assessment":
-        "RD-7-Regulatory & Compliance Assessment",
+      "Proof of Concept": "RD-3-proof-of-concept",
+      "Engineering Analysis": "RD-4-engineering-analysis",
+      "Final Design & Full Prototype": "RD-5-final-design-prototype",
+      "User Validation & Iteration": "RD-6-user-validation",
+      "Regulatory & Compliance Assessment": "RD-7-regulatory-compliance",
       "Manufacturing Plan": "RD-8-Manufacturing Plan",
       "Marketing Renders & Launch Support":
         "RD-9-Marketing Renders & Launch Support",
@@ -119,7 +118,7 @@ const getStepDirectoryName = (
       "Control System Design": "MD-5-control-system",
       "Analysis & Optimization": "MD-6-analysis-optimization",
       "Maintenance Planning": "MD-7-maintenance-planning",
-      "Operator Training": "MD-8-operator-training",
+      "Operator Training": "MD-8-training",
     };
 
     const directoryName = machineStepMap[stepTitle];

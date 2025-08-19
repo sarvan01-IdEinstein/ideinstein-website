@@ -30,8 +30,7 @@ export async function POST(request: NextRequest) {
       first_name: firstName,
       last_name: lastName,
       phone: validatedData.phone,
-      company: validatedData.company,
-      description: `Contact Form Submission: ${validatedData.subject || 'General Inquiry'}\n\nMessage: ${validatedData.message}`
+      company: validatedData.company
     })
     
     console.log('✅ Contact created in Zoho CRM:', zohoContact.id)

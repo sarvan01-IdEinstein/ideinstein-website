@@ -1,0 +1,32 @@
+@echo off
+echo Creating missing service images...
+
+REM Create remaining main service images
+echo Creating main service images...
+
+REM GD&T and Tolerance Analysis
+if not exist "public\images\services\engineering\gdt-tolerance\main\service-hero.svg" (
+    echo ^<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg"^>^<defs^>^<linearGradient id="gdt" x1="0%%" y1="0%%" x2="100%%" y2="100%%"^>^<stop offset="0%%" style="stop-color:#7C3AED;stop-opacity:0.9" /^>^<stop offset="100%%" style="stop-color:#7C3AED;stop-opacity:0.6" /^>^</linearGradient^>^</defs^>^<rect width="100%%" height="100%%" fill="#F8FAFC"/^>^<rect width="100%%" height="100%%" fill="url(#gdt)"/^>^<g transform="translate(960, 400)"^>^<circle cx="0" cy="0" r="30" fill="none" stroke="white" stroke-width="3" opacity="0.4"/^>^<text x="0" y="5" text-anchor="middle" font-family="Arial" font-size="24" fill="white" opacity="0.6"^>⌖^</text^>^</g^>^<text x="50%%" y="55%%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="72" font-weight="600" fill="white"^>GD^&T Analysis^</text^>^<text x="50%%" y="65%%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="32" font-weight="400" fill="white" opacity="0.9"^>Geometric Dimensioning ^& Tolerancing^</text^>^<text x="50%%" y="85%%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="24" font-weight="300" fill="white" opacity="0.7"^>IdEinstein - Where Ideas Take Shape^</text^>^</svg^> > "public\images\services\engineering\gdt-tolerance\main\service-hero.svg"
+)
+
+REM BIW Design
+if not exist "public\images\services\engineering\biw-design\main\service-hero.svg" (
+    echo ^<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg"^>^<defs^>^<linearGradient id="biw" x1="0%%" y1="0%%" x2="100%%" y2="100%%"^>^<stop offset="0%%" style="stop-color:#7C3AED;stop-opacity:0.9" /^>^<stop offset="100%%" style="stop-color:#7C3AED;stop-opacity:0.6" /^>^</linearGradient^>^</defs^>^<rect width="100%%" height="100%%" fill="#F8FAFC"/^>^<rect width="100%%" height="100%%" fill="url(#biw)"/^>^<g transform="translate(960, 400)"^>^<rect x="-40" y="-20" width="80" height="40" rx="4" fill="white" opacity="0.3"/^>^<rect x="-30" y="-30" width="60" height="20" rx="2" fill="white" opacity="0.2"/^>^</g^>^<text x="50%%" y="55%%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="72" font-weight="600" fill="white"^>BIW Design^</text^>^<text x="50%%" y="65%%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="32" font-weight="400" fill="white" opacity="0.9"^>Body-in-White Engineering^</text^>^<text x="50%%" y="85%%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="24" font-weight="300" fill="white" opacity="0.7"^>IdEinstein - Where Ideas Take Shape^</text^>^</svg^> > "public\images\services\engineering\biw-design\main\service-hero.svg"
+)
+
+REM Technical Documentation
+if not exist "public\images\services\design\technical-documentation\main\service-hero.svg" (
+    echo ^<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg"^>^<defs^>^<linearGradient id="docs" x1="0%%" y1="0%%" x2="100%%" y2="100%%"^>^<stop offset="0%%" style="stop-color:#059669;stop-opacity:0.9" /^>^<stop offset="100%%" style="stop-color:#059669;stop-opacity:0.6" /^>^</linearGradient^>^</defs^>^<rect width="100%%" height="100%%" fill="#F8FAFC"/^>^<rect width="100%%" height="100%%" fill="url(#docs)"/^>^<g transform="translate(960, 400)"^>^<rect x="-30" y="-40" width="60" height="80" rx="4" fill="white" opacity="0.3"/^>^<rect x="-20" y="-30" width="40" height="8" fill="white" opacity="0.4"/^>^<rect x="-20" y="-15" width="30" height="4" fill="white" opacity="0.4"/^>^<rect x="-20" y="-8" width="35" height="4" fill="white" opacity="0.4"/^>^</g^>^<text x="50%%" y="55%%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="72" font-weight="600" fill="white"^>Technical Documentation^</text^>^<text x="50%%" y="65%%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="32" font-weight="400" fill="white" opacity="0.9"^>Professional Documentation Services^</text^>^<text x="50%%" y="85%%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="24" font-weight="300" fill="white" opacity="0.7"^>IdEinstein - Where Ideas Take Shape^</text^>^</svg^> > "public\images\services\design\technical-documentation\main\service-hero.svg"
+)
+
+REM Supplier Sourcing
+if not exist "public\images\services\manufacturing\supplier-sourcing\main\service-hero.svg" (
+    echo ^<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg"^>^<defs^>^<linearGradient id="supplier" x1="0%%" y1="0%%" x2="100%%" y2="100%%"^>^<stop offset="0%%" style="stop-color:#1E40AF;stop-opacity:0.9" /^>^<stop offset="100%%" style="stop-color:#1E40AF;stop-opacity:0.6" /^>^</linearGradient^>^</defs^>^<rect width="100%%" height="100%%" fill="#F8FAFC"/^>^<rect width="100%%" height="100%%" fill="url(#supplier)"/^>^<g transform="translate(960, 400)"^>^<circle cx="-20" cy="0" r="15" fill="white" opacity="0.3"/^>^<circle cx="20" cy="0" r="15" fill="white" opacity="0.3"/^>^<line x1="-5" y1="0" x2="5" y2="0" stroke="white" stroke-width="3" opacity="0.4"/^>^</g^>^<text x="50%%" y="55%%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="72" font-weight="600" fill="white"^>Supplier Sourcing^</text^>^<text x="50%%" y="65%%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="32" font-weight="400" fill="white" opacity="0.9"^>Strategic Procurement Solutions^</text^>^<text x="50%%" y="85%%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="24" font-weight="300" fill="white" opacity="0.7"^>IdEinstein - Where Ideas Take Shape^</text^>^</svg^> > "public\images\services\manufacturing\supplier-sourcing\main\service-hero.svg"
+)
+
+echo Main service images created!
+echo.
+echo To create process step images, you can use the same pattern.
+echo Replace the existing .jpg files with .svg files in your components if needed.
+echo.
+pause

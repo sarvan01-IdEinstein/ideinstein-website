@@ -130,22 +130,7 @@ const StorePage = () => {
 
   return (
     <div className="min-h-screen py-24">
-      {/* Floating Get Quote Button */}
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="fixed bottom-8 right-8 z-50"
-      >
-        <Link href="/contact">
-          <Button
-            variant="default"
-            className="shadow-lg hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 text-white rounded-full px-6"
-          >
-            <MessageCircle className="w-4 h-4 mr-2" />
-            Get Quote
-          </Button>
-        </Link>
-      </motion.div>
+
       <PageHero
         title="Engineering Store"
         subtitle="Premium materials, professional tools, and cutting-edge equipment for your engineering projects."
