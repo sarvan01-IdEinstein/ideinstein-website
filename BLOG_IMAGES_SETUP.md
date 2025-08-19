@@ -51,3 +51,5 @@ If you don't have images yet, the blog will still work. The Image component will
 2. Add the required images
 3. Test the blog posts to ensure images load correctly
 4. Optimize images for web if needed
+
+#There are some long name changes donr and refer the current folder
