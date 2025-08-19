@@ -28,7 +28,7 @@
       "command": "npx",
       "args": [
         "mcp-remote",
-        "https://mcp.brightdata.com/mcp?token=20107aa43226a65948861f15563504cee030faf9eae5e5db5311761ee13700fc"
+        "https://mcp.brightdata.com/mcp?token=your-bright-data-token-here"
       ],
       "env": {},
       "disabled": false,
