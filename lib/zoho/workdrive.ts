@@ -12,12 +12,25 @@ export interface ZohoFile {
 }
 
 export class ZohoWorkDriveService extends ZohoBaseService {
-  protected clientId = process.env.ZOHO_WORKDRIVE_CLIENT_ID!
-  protected clientSecret = process.env.ZOHO_WORKDRIVE_CLIENT_SECRET!
-  protected refreshToken = process.env.ZOHO_WORKDRIVE_REFRESH_TOKEN!
-  protected baseUrl = process.env.ZOHO_DOMAIN || 'https://accounts.zoho.in'
+  protected get clientId(): string {
+    return process.env.ZOHO_WORKDRIVE_CLIENT_ID!
+  }
   
-  private rootFolderId = process.env.ZOHO_WORKDRIVE_ROOT_FOLDER
+  protected get clientSecret(): string {
+    return process.env.ZOHO_WORKDRIVE_CLIENT_SECRET!
+  }
+  
+  protected get refreshToken(): string {
+    return process.env.ZOHO_WORKDRIVE_REFRESH_TOKEN!
+  }
+  
+  protected get baseUrl(): string {
+    return process.env.ZOHO_DOMAIN || 'https://accounts.zoho.in'
+  }
+  
+  private get rootFolderId(): string | undefined {
+    return process.env.ZOHO_WORKDRIVE_ROOT_FOLDER
+  }
 
   constructor() {
     super()

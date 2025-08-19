@@ -14,10 +14,21 @@ export interface ZohoProject {
 }
 
 export class ZohoProjectsService extends ZohoBaseService {
-  protected clientId = process.env.ZOHO_PROJECTS_CLIENT_ID!
-  protected clientSecret = process.env.ZOHO_PROJECTS_CLIENT_SECRET!
-  protected refreshToken = process.env.ZOHO_PROJECTS_REFRESH_TOKEN!
-  protected baseUrl = process.env.ZOHO_DOMAIN || 'https://accounts.zoho.in'
+  protected get clientId(): string {
+    return process.env.ZOHO_PROJECTS_CLIENT_ID!
+  }
+  
+  protected get clientSecret(): string {
+    return process.env.ZOHO_PROJECTS_CLIENT_SECRET!
+  }
+  
+  protected get refreshToken(): string {
+    return process.env.ZOHO_PROJECTS_REFRESH_TOKEN!
+  }
+  
+  protected get baseUrl(): string {
+    return process.env.ZOHO_DOMAIN || 'https://accounts.zoho.in'
+  }
 
   constructor() {
     super()

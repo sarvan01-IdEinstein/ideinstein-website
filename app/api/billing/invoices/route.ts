@@ -1,27 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-
-// Dynamic imports to prevent build-time execution
-const getZohoServices = async () => {
-  const { zohoCRM, zohoBooks } = await import('@/lib/zoho/index')
-  return { zohoCRM, zohoBooks }
-}
-
-const getPermissionService = async () => {
-  const { requirePermission, Permission } = await import('@/lib/rbac')
-  return { requirePermission, Permission }
-}
-
-const getAuditLogger = async () => {
-  const { AuditLogger } = await import('@/lib/audit')
-  return { AuditLogger }
-}
-
-const getCacheService = async () => {
-  const { CacheService } = await import('@/lib/cache')
-  return { CacheService }
-}
+import { requirePermission, Permission } from '@/lib/rbac'
+import { AuditLogger } from '@/lib/audit'
+import { CacheService } from '@/lib/cache'
+import { zohoCRM } from '@/lib/zoho/index'
 
 export async function GET(request: NextRequest) {
   console.log('🔍 Billing/Invoices API - GET called')
@@ -34,12 +17,6 @@ export async function GET(request: NextRequest) {
         { status: 503 }
       )
     }
-
-    // Dynamic imports
-    const { requirePermission, Permission } = await getPermissionService()
-    const { zohoCRM } = await getZohoServices()
-    const { AuditLogger } = await getAuditLogger()
-    const { CacheService } = await getCacheService()
     
     // Check permissions
     const permissionResult = await requirePermission(request, Permission.READ_OWN_INVOICES)
@@ -110,7 +87,6 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
     if (session?.user) {
       try {
-        const { AuditLogger } = await getAuditLogger()
         await AuditLogger.logSecurityEvent(
           'suspicious_activity',
           session.user.id,
