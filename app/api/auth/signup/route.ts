@@ -1,10 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { zohoCRM } from '@/lib/zoho/index'
+
+// Dynamic import to prevent build-time execution
+const getZohoCRM = async () => {
+  const { zohoCRM } = await import('@/lib/zoho/index')
+  return zohoCRM
+}
 
 export async function POST(request: NextRequest) {
   console.log('🚀 Signup API called')
   
   try {
+    // Check if Zoho is configured
+    if (!process.env.ZOHO_CLIENT_ID || !process.env.ZOHO_CLIENT_SECRET) {
+      return NextResponse.json(
+        { error: 'Zoho configuration not available' },
+        { status: 503 }
+      )
+    }
+
+    const zohoCRM = await getZohoCRM()
+    
     const body = await request.json()
     const { firstName, lastName, email, company, password } = body
 
@@ -101,4 +116,6 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+}// 
+Prevent this route from being statically analyzed during build
+export const dynamic = 'force-dynamic'

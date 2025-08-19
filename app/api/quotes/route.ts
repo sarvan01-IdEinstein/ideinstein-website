@@ -1,10 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
-import { zohoCRM, zohoWorkDrive } from '@/lib/zoho/index'
+
+// Dynamic imports to prevent build-time execution
+const getZohoServices = async () => {
+  const { zohoCRM, zohoWorkDrive } = await import('@/lib/zoho/index')
+  return { zohoCRM, zohoWorkDrive }
+}
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Zoho is configured
+    if (!process.env.ZOHO_CLIENT_ID || !process.env.ZOHO_CLIENT_SECRET) {
+      return NextResponse.json(
+        { error: 'Zoho configuration not available' },
+        { status: 503 }
+      )
+    }
+
+    const { zohoCRM, zohoWorkDrive } = await getZohoServices()
+    
     const session = await getServerSession(authOptions)
     const body = await request.json()
     
@@ -190,4 +205,6 @@ Contact ID: ${contactId}`,
       { status: 500 }
     )
   }
-}
+}// Prevent 
+this route from being statically analyzed during build
+export const dynamic = 'force-dynamic'

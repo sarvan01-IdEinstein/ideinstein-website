@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { zohoCRM } from '@/lib/zoho/index';
+
+// Dynamic import to prevent build-time execution
+const getZohoCRM = async () => {
+  const { zohoCRM } = await import('@/lib/zoho/index');
+  return zohoCRM;
+};
 
 // Consultation request validation schema
 const consultationSchema = z.object({
@@ -27,6 +32,16 @@ const consultationSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Zoho is configured
+    if (!process.env.ZOHO_CLIENT_ID || !process.env.ZOHO_CLIENT_SECRET) {
+      return NextResponse.json(
+        { error: 'Zoho configuration not available' },
+        { status: 503 }
+      )
+    }
+
+    const zohoCRM = await getZohoCRM();
+    
     const body = await request.json();
     
     // Validate input
@@ -105,4 +120,6 @@ Submitted via website consultation form.`
       { status: 500 }
     );
   }
-}
+}// 
+Prevent this route from being statically analyzed during build
+export const dynamic = 'force-dynamic'

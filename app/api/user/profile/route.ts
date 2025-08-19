@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { zohoService } from '@/lib/zoho'
+
+// Dynamic import to prevent build-time execution
+const getZohoService = async () => {
+  const { zohoService } = await import('@/lib/zoho')
+  return zohoService
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,6 +15,16 @@ export async function GET(request: NextRequest) {
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    // Check if Zoho is configured
+    if (!process.env.ZOHO_CLIENT_ID || !process.env.ZOHO_CLIENT_SECRET) {
+      return NextResponse.json(
+        { error: 'Zoho configuration not available' },
+        { status: 503 }
+      )
+    }
+
+    const zohoService = await getZohoService()
 
     // Find the contact in Zoho CRM
     const contact = await zohoService.findContactByEmail(session.user.email)
@@ -88,3 +103,6 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
+
+// Prevent this route from being statically analyzed during build
+export const dynamic = 'force-dynamic'

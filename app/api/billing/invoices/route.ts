@@ -1,15 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { requirePermission, Permission } from '@/lib/rbac'
-import { AuditLogger } from '@/lib/audit'
-import { CacheService } from '@/lib/cache'
-import { zohoCRM, zohoBooks } from '@/lib/zoho/index'
+
+// Dynamic imports to prevent build-time execution
+const getZohoServices = async () => {
+  const { zohoCRM, zohoBooks } = await import('@/lib/zoho/index')
+  return { zohoCRM, zohoBooks }
+}
+
+const getPermissionService = async () => {
+  const { requirePermission, Permission } = await import('@/lib/rbac')
+  return { requirePermission, Permission }
+}
+
+const getAuditLogger = async () => {
+  const { AuditLogger } = await import('@/lib/audit')
+  return { AuditLogger }
+}
+
+const getCacheService = async () => {
+  const { CacheService } = await import('@/lib/cache')
+  return { CacheService }
+}
 
 export async function GET(request: NextRequest) {
   console.log('🔍 Billing/Invoices API - GET called')
   
   try {
+    // Check if required environment variables are available
+    if (!process.env.ZOHO_CLIENT_ID || !process.env.ZOHO_CLIENT_SECRET) {
+      return NextResponse.json(
+        { error: 'Zoho configuration not available' },
+        { status: 503 }
+      )
+    }
+
+    // Dynamic imports
+    const { requirePermission, Permission } = await getPermissionService()
+    const { zohoCRM } = await getZohoServices()
+    const { AuditLogger } = await getAuditLogger()
+    const { CacheService } = await getCacheService()
+    
     // Check permissions
     const permissionResult = await requirePermission(request, Permission.READ_OWN_INVOICES)
     if (permissionResult instanceof Response) {
@@ -78,14 +109,22 @@ export async function GET(request: NextRequest) {
     // Log security event for errors
     const session = await getServerSession(authOptions)
     if (session?.user) {
-      await AuditLogger.logSecurityEvent(
-        'suspicious_activity',
-        session.user.id,
-        request.ip,
-        { error: (error as Error).message, endpoint: '/api/billing/invoices' }
-      )
+      try {
+        const { AuditLogger } = await getAuditLogger()
+        await AuditLogger.logSecurityEvent(
+          'suspicious_activity',
+          session.user.id,
+          request.ip,
+          { error: (error as Error).message, endpoint: '/api/billing/invoices' }
+        )
+      } catch (auditError) {
+        console.error('Failed to log audit event:', auditError)
+      }
     }
     
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
+
+// Prevent this route from being statically analyzed during build
+export const dynamic = 'force-dynamic'
