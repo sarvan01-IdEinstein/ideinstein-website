@@ -1,7 +1,15 @@
 // Comprehensive Audit Logging System
 import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
+// Lazy initialization to prevent build-time issues
+let prisma: PrismaClient | null = null
+
+const getPrisma = () => {
+  if (!prisma) {
+    prisma = new PrismaClient()
+  }
+  return prisma
+}
 
 export interface AuditEvent {
   userId?: string
@@ -17,7 +25,7 @@ export interface AuditEvent {
 export class AuditLogger {
   static async log(event: AuditEvent): Promise<void> {
     try {
-      await prisma.auditLog.create({
+      await getPrisma().auditLog.create({
         data: {
           userId: event.userId,
           action: event.action,
@@ -45,7 +53,7 @@ export class AuditLogger {
     offset = 0
   ): Promise<any[]> {
     try {
-      return await prisma.auditLog.findMany({
+      return await getPrisma().auditLog.findMany({
         where: {
           ...(userId && { userId }),
           ...(entity && { entity })
@@ -90,24 +98,24 @@ export class AuditLogger {
       
       const [totalEvents, eventsByAction, eventsByEntity, eventsByUser] = await Promise.all([
         // Total events count
-        prisma.auditLog.count({ where: whereClause }),
+        getPrisma().auditLog.count({ where: whereClause }),
         
         // Events by action
-        prisma.auditLog.groupBy({
+        getPrisma().auditLog.groupBy({
           by: ['action'],
           where: whereClause,
           _count: { action: true }
         }),
         
         // Events by entity
-        prisma.auditLog.groupBy({
+        getPrisma().auditLog.groupBy({
           by: ['entity'],
           where: whereClause,
           _count: { entity: true }
         }),
         
         // Events by user
-        prisma.auditLog.groupBy({
+        getPrisma().auditLog.groupBy({
           by: ['userId'],
           where: whereClause,
           _count: { userId: true }

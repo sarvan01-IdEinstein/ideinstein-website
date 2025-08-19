@@ -1,8 +1,20 @@
 // Intelligent Caching Service with PostgreSQL
 import { PrismaClient } from '@prisma/client'
-import { zohoProjects, zohoBooks, zohoCRM } from '@/lib/zoho/index'
 
-const prisma = new PrismaClient()
+// Lazy initialization to prevent build-time issues
+let prisma: PrismaClient | null = null
+
+const getPrisma = () => {
+  if (!prisma) {
+    prisma = new PrismaClient()
+  }
+  return prisma
+}
+
+const getZohoServices = async () => {
+  const { zohoProjects, zohoBooks, zohoCRM } = await import('@/lib/zoho/index')
+  return { zohoProjects, zohoBooks, zohoCRM }
+}
 
 export class CacheService {
   // Cache freshness threshold (5 minutes)
@@ -15,7 +27,7 @@ export class CacheService {
       
       if (!forceRefresh) {
         // Try database cache first
-        const cachedProjects = await prisma.projectsCache.findMany({
+        const cachedProjects = await getPrisma().projectsCache.findMany({
           where: { accountId },
           orderBy: { updatedAt: 'desc' }
         })
@@ -33,6 +45,7 @@ export class CacheService {
       
       // Fetch fresh data from Zoho Projects
       console.log('🔄 Fetching fresh projects from Zoho...')
+      const { zohoProjects } = await getZohoServices()
       const freshProjects = await zohoProjects.getProjectsByClient(accountId)
       
       if (freshProjects && freshProjects.length > 0) {
@@ -47,7 +60,7 @@ export class CacheService {
       
       // Fallback to cache even if stale
       try {
-        const fallbackProjects = await prisma.projectsCache.findMany({
+        const fallbackProjects = await getPrisma().projectsCache.findMany({
           where: { accountId },
           orderBy: { updatedAt: 'desc' }
         })
@@ -67,7 +80,7 @@ export class CacheService {
   static async updateProjectsCache(accountId: string, projects: any[]): Promise<void> {
     try {
       for (const project of projects) {
-        await prisma.projectsCache.upsert({
+        await getPrisma().projectsCache.upsert({
           where: { zohoProjectId: project.id },
           update: {
             name: project.name || 'Unnamed Project',
@@ -105,7 +118,7 @@ export class CacheService {
       
       if (!forceRefresh) {
         // Try database cache first
-        const cachedInvoices = await prisma.invoicesCache.findMany({
+        const cachedInvoices = await getPrisma().invoicesCache.findMany({
           where: { accountId },
           orderBy: { updatedAt: 'desc' }
         })
@@ -123,6 +136,7 @@ export class CacheService {
       
       // Fetch fresh data from Zoho Books
       console.log('🔄 Fetching fresh invoices from Zoho...')
+      const { zohoBooks } = await getZohoServices()
       const freshInvoices = await zohoBooks.getInvoices(accountId)
       
       if (freshInvoices && freshInvoices.length > 0) {
@@ -137,7 +151,7 @@ export class CacheService {
       
       // Fallback to cache even if stale
       try {
-        const fallbackInvoices = await prisma.invoicesCache.findMany({
+        const fallbackInvoices = await getPrisma().invoicesCache.findMany({
           where: { accountId },
           orderBy: { updatedAt: 'desc' }
         })
@@ -157,7 +171,7 @@ export class CacheService {
   static async updateInvoicesCache(accountId: string, invoices: any[]): Promise<void> {
     try {
       for (const invoice of invoices) {
-        await prisma.invoicesCache.upsert({
+        await getPrisma().invoicesCache.upsert({
           where: { zohoInvoiceId: invoice.invoice_id },
           update: {
             invoiceNumber: invoice.invoice_number || 'Unknown',
@@ -194,13 +208,13 @@ export class CacheService {
       console.log(`🗑️ Invalidating ${entity} cache for account: ${accountId}`)
       
       if (entity === 'projects' || entity === 'all') {
-        await prisma.projectsCache.deleteMany({
+        await getPrisma().projectsCache.deleteMany({
           where: { accountId }
         })
       }
       
       if (entity === 'invoices' || entity === 'all') {
-        await prisma.invoicesCache.deleteMany({
+        await getPrisma().invoicesCache.deleteMany({
           where: { accountId }
         })
       }
@@ -225,12 +239,12 @@ export class CacheService {
         totalInvoices,
         freshInvoices
       ] = await Promise.all([
-        prisma.projectsCache.count(),
-        prisma.projectsCache.count({
+        getPrisma().projectsCache.count(),
+        getPrisma().projectsCache.count({
           where: { lastSynced: { gte: threshold } }
         }),
-        prisma.invoicesCache.count(),
-        prisma.invoicesCache.count({
+        getPrisma().invoicesCache.count(),
+        getPrisma().invoicesCache.count({
           where: { lastSynced: { gte: threshold } }
         })
       ])
