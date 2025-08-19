@@ -111,6 +111,7 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-}// 
-Prevent this route from being statically analyzed during build
+}
+
+// Prevent this route from being statically analyzed during build
 export const dynamic = 'force-dynamic'
